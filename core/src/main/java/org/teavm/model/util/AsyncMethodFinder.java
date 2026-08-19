@@ -145,7 +145,8 @@ public class AsyncMethodFinder {
     }
 
     private void add(MethodReference methodRef, CallStack stack) {
-        if (methodRef.getClassName().equals(Fiber.class.getName())) {
+        if (methodRef.getClassName().equals(Fiber.class.getName())
+                || methodRef.getClassName().startsWith(Fiber.class.getName() + "$")) {
             return;
         }
 
