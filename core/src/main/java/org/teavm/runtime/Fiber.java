@@ -15,7 +15,6 @@
  */
 package org.teavm.runtime;
 
-import java.util.Arrays;
 import org.teavm.interop.AsyncCallback;
 import org.teavm.interop.StaticInit;
 import org.teavm.interop.Unmanaged;
@@ -56,7 +55,7 @@ public class Fiber {
         if (intValues == null) {
             intValues = new int[4];
         } else if (intTop + 1 == intValues.length) {
-            intValues = Arrays.copyOf(intValues, intValues.length * 3 / 2);
+            intValues = grow(intValues);
         }
         intValues[intTop++] = value;
     }
@@ -65,7 +64,7 @@ public class Fiber {
         if (longValues == null) {
             longValues = new long[4];
         } else if (longTop + 1 == longValues.length) {
-            longValues = Arrays.copyOf(longValues, longValues.length * 3 / 2);
+            longValues = grow(longValues);
         }
         longValues[longTop++] = value;
     }
@@ -74,7 +73,7 @@ public class Fiber {
         if (floatValues == null) {
             floatValues = new float[4];
         } else if (floatTop + 1 == floatValues.length) {
-            floatValues = Arrays.copyOf(floatValues, floatValues.length * 3 / 2);
+            floatValues = grow(floatValues);
         }
         floatValues[floatTop++] = value;
     }
@@ -83,7 +82,7 @@ public class Fiber {
         if (doubleValues == null) {
             doubleValues = new double[4];
         } else if (doubleTop + 1 == doubleValues.length) {
-            doubleValues = Arrays.copyOf(doubleValues, doubleValues.length * 3 / 2);
+            doubleValues = grow(doubleValues);
         }
         doubleValues[doubleTop++] = value;
     }
@@ -92,9 +91,49 @@ public class Fiber {
         if (objectValues == null) {
             objectValues = new Object[4];
         } else if (objectTop + 1 == objectValues.length) {
-            objectValues = Arrays.copyOf(objectValues, objectValues.length * 3 / 2);
+            objectValues = grow(objectValues);
         }
         objectValues[objectTop++] = value;
+    }
+
+    private static int[] grow(int[] array) {
+        var copy = new int[array.length * 3 / 2];
+        for (var i = 0; i < array.length; ++i) {
+            copy[i] = array[i];
+        }
+        return copy;
+    }
+
+    private static long[] grow(long[] array) {
+        var copy = new long[array.length * 3 / 2];
+        for (var i = 0; i < array.length; ++i) {
+            copy[i] = array[i];
+        }
+        return copy;
+    }
+
+    private static float[] grow(float[] array) {
+        var copy = new float[array.length * 3 / 2];
+        for (var i = 0; i < array.length; ++i) {
+            copy[i] = array[i];
+        }
+        return copy;
+    }
+
+    private static double[] grow(double[] array) {
+        var copy = new double[array.length * 3 / 2];
+        for (var i = 0; i < array.length; ++i) {
+            copy[i] = array[i];
+        }
+        return copy;
+    }
+
+    private static Object[] grow(Object[] array) {
+        var copy = new Object[array.length * 3 / 2];
+        for (var i = 0; i < array.length; ++i) {
+            copy[i] = array[i];
+        }
+        return copy;
     }
 
     public static void reversePush(int value, Fiber fiber) {
