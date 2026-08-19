@@ -168,16 +168,16 @@ class CoroutineFunctions {
 
     WasmFunction isResuming() {
         if (isResumingCache == null) {
-            isResumingCache = functions.forInstanceMethod(new MethodReference(Fiber.class, "isResuming",
-                    boolean.class));
+            isResumingCache = functions.forStaticMethod(new MethodReference(Fiber.class, "isResuming",
+                    Fiber.class, boolean.class));
         }
         return isResumingCache;
     }
 
     WasmFunction isSuspending() {
         if (isSuspendingCache == null) {
-            isSuspendingCache = functions.forInstanceMethod(new MethodReference(Fiber.class, "isSuspending",
-                    boolean.class));
+            isSuspendingCache = functions.forStaticMethod(new MethodReference(Fiber.class, "isSuspending",
+                    Fiber.class, boolean.class));
         }
         return isSuspendingCache;
     }
