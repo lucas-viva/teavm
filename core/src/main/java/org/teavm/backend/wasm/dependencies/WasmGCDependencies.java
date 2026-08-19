@@ -153,6 +153,12 @@ public class WasmGCDependencies {
     private void contributeFiber() {
         analyzer.linkMethod(new MethodReference(Fiber.class, "isResuming", boolean.class)).use();
         analyzer.linkMethod(new MethodReference(Fiber.class, "isSuspending", boolean.class)).use();
+        analyzer.linkMethod(new MethodReference(Fiber.class, "isResuming", Fiber.class, boolean.class))
+                .propagate(1, Fiber.class)
+                .use();
+        analyzer.linkMethod(new MethodReference(Fiber.class, "isSuspending", Fiber.class, boolean.class))
+                .propagate(1, Fiber.class)
+                .use();
         analyzer.linkMethod(new MethodReference(Fiber.class, "current", Fiber.class)).use();
         analyzer.linkMethod(new MethodReference(Thread.class, "setCurrentThread", Thread.class,
                 void.class)).use();

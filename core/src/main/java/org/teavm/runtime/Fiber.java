@@ -187,6 +187,16 @@ public class Fiber {
     }
 
     @Unmanaged
+    public static boolean isSuspending(Fiber fiber) {
+        return fiber != null && fiber.isSuspending();
+    }
+
+    @Unmanaged
+    public static boolean isResuming(Fiber fiber) {
+        return fiber != null && fiber.isResuming();
+    }
+
+    @Unmanaged
     public static boolean getBoolean(Object v) {
         return v != null ? (Boolean) v : false;
     }
