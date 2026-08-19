@@ -42,6 +42,7 @@ public class Fiber {
     private Throwable exception;
     private boolean isPendingResume;
     private boolean daemon;
+    private PendingCall deferredCall;
 
     private static Fiber current;
     private static PendingCall lastPendingCall;
@@ -293,7 +294,7 @@ public class Fiber {
 
         fiber.state = STATE_SUSPENDING;
         pendingCall.callback = new AsyncCallbackImpl(pendingCall, javaThread, fiber);
-        call.run(pendingCall.callback);
+        fiber.deferredCall = pendingCall;
         return null;
     }
 
@@ -373,6 +374,15 @@ public class Fiber {
         current = this;
         while (true) {
             runner.run();
+            while (deferredCall != null && !isPendingResume) {
+                PendingCall callToStart = deferredCall;
+                deferredCall = null;
+                state = STATE_RUNNING;
+                callToStart.value.run(callToStart.callback);
+                if (!isPendingResume && state == STATE_RUNNING) {
+                    state = STATE_SUSPENDING;
+                }
+            }
             if (!isPendingResume) {
                 break;
             }
