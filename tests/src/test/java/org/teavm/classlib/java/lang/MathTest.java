@@ -125,6 +125,34 @@ public class MathTest {
         assertEquals(2, Math.round(1.8));
         assertEquals(-1, Math.round(-1.3));
         assertEquals(-2, Math.round(-1.8));
+
+        // Ties round towards positive infinity, including for negative arguments.
+        assertEquals(1, Math.round(0.5));
+        assertEquals(2, Math.round(1.5));
+        assertEquals(0, Math.round(-0.5));
+        assertEquals(-1, Math.round(-1.5));
+        assertEquals(-2, Math.round(-2.5));
+        assertEquals(1, Math.round(0.5f));
+        assertEquals(2, Math.round(1.5f));
+        assertEquals(0, Math.round(-0.5f));
+        assertEquals(-1, Math.round(-1.5f));
+        assertEquals(-2, Math.round(-2.5f));
+
+        // Largest values below 0.5: adding 0.5 in the argument's own precision would round the
+        // sum up to 1, but the result must stay 0 (JDK-8010430).
+        assertEquals(0, Math.round(0.49999999999999994));
+        assertEquals(0, Math.round(0.49999997f));
+
+        assertEquals(0, Math.round(Double.NaN));
+        assertEquals(0, Math.round(Float.NaN));
+        assertEquals(Long.MAX_VALUE, Math.round(Double.POSITIVE_INFINITY));
+        assertEquals(Long.MIN_VALUE, Math.round(Double.NEGATIVE_INFINITY));
+        assertEquals(Integer.MAX_VALUE, Math.round(Float.POSITIVE_INFINITY));
+        assertEquals(Integer.MIN_VALUE, Math.round(Float.NEGATIVE_INFINITY));
+        assertEquals(Long.MAX_VALUE, Math.round(1e19));
+        assertEquals(Long.MIN_VALUE, Math.round(-1e19));
+        assertEquals(Integer.MAX_VALUE, Math.round(1e10f));
+        assertEquals(Integer.MIN_VALUE, Math.round(-1e10f));
     }
 
     @Test

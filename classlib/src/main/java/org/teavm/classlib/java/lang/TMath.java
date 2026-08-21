@@ -125,11 +125,33 @@ public final class TMath extends TObject {
     public static native double atan2(double y, double x);
 
     public static int round(float a) {
-        return (int) (a + signum(a) * 0.5f);
+        if (Float.isNaN(a)) {
+            return 0;
+        }
+        if (a >= Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        if (a <= Integer.MIN_VALUE) {
+            return Integer.MIN_VALUE;
+        }
+        return (int) Math.floor(a + 0.5);
     }
 
     public static long round(double a) {
-        return (long) (a + signum(a) * 0.5);
+        if (Double.isNaN(a)) {
+            return 0;
+        }
+        if (a >= Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
+        }
+        if (a <= Long.MIN_VALUE) {
+            return Long.MIN_VALUE;
+        }
+        double floor = Math.floor(a);
+        if (a - floor >= 0.5) {
+            floor += 1.0;
+        }
+        return (long) floor;
     }
 
     public static int floorDiv(int a, int b) {
