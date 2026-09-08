@@ -884,7 +884,6 @@ public class ReflectionMetadataGenerator {
         function.add(thisVar);
         var argsVar = new WasmLocal(objectArrayClass.getType(), "args");
         function.add(argsVar);
-        var argsDataVar = new WasmLocal(dataField.getUnpackedType(), "argsData");
         var body = function.getBody().builder();
         var args = new WasmInstructionList().builder();
 
@@ -903,23 +902,14 @@ public class ReflectionMetadataGenerator {
             }
         }
 
-        if (method.parameterCount() > 0) {
-            args
-                    .getLocal(argsVar)
-                    .structGet(objectArrayClass.getStructure(), dataField.getIndex());
-            if (method.parameterCount() > 1) {
-                function.add(argsDataVar);
-                args.teeLocal(argsDataVar);
-            }
-        }
-
         var dataType = (WasmType.CompositeReference) dataField.getUnpackedType();
         var dataArray = (WasmArray) dataType.composite;
         for (var i = 0; i < method.parameterCount(); ++i) {
-            if (i > 0) {
-                args.getLocal(argsDataVar);
-            }
-            args.i32Const(i).arrayGet(dataArray);
+            args
+                    .getLocal(argsVar)
+                    .structGet(objectArrayClass.getStructure(), dataField.getIndex())
+                    .i32Const(i)
+                    .arrayGet(dataArray);
             unboxIfNecessary(args, method.parameterType(i));
         }
 

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.teavm.classlib.support.Reflectable;
 import org.teavm.interop.Async;
 import org.teavm.interop.AsyncCallback;
 import org.teavm.interop.Intrinsified;
@@ -66,6 +67,16 @@ public class WasmAsyncTest {
         assertEquals(54, teeThenSuspend());
     }
 
+    @Test
+    public void suspendingReflectiveCall() throws Exception {
+        // Two arguments matter here: with more than one argument the generated caller reads
+        // the argument array multiple times, and the method being suspendable means the caller
+        // goes through the coroutine transformation.
+        var method = ReflectiveTarget.class.getMethod("concatAfterSleep", String.class, String.class);
+        var result = method.invoke(null, "left", "right");
+        assertEquals("left:right", result);
+    }
+
     @Async
     @NativeAsync
     @Intrinsified
@@ -99,5 +110,13 @@ public class WasmAsyncTest {
 
     private static void sum(int a, int b, AsyncCallback<Integer> callback) {
         Window.setTimeout(() -> callback.complete(a + b), 0);
+    }
+
+    static class ReflectiveTarget {
+        @Reflectable
+        public static String concatAfterSleep(String a, String b) throws InterruptedException {
+            Thread.sleep(1);
+            return a + ":" + b;
+        }
     }
 }
